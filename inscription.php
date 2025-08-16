@@ -2,6 +2,10 @@
  // Initialisation de session // 
  session_start();
 
+ if(isset($_SESSION['connect'])){
+	header('location: index.php');
+ }
+
 	// On vérifie que le formulaire d'inscription a bien été soumis // 
  if(!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_two'])){
 	

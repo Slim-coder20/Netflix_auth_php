@@ -5,7 +5,7 @@
 session_start(); 
 
 	// On vérifie que le formulaire de connexion a bien été rempli // 
-	if(!empty($_POST['email'] && !empty($_POST['password']))){
+	if(!empty($_POST['email']) && !empty($_POST['password'])){
 
 	// connexion à la base de donnée // 
 	require_once('src/connexion.php');
