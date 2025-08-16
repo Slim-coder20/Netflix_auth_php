@@ -2,7 +2,7 @@
  // Initialisation de session // 
  session_start();
 
- // On vérifie que le formulaire d'inscription a bien été soumis // 
+	// On vérifie que le formulaire d'inscription a bien été soumis // 
  if(!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['password_two'])){
 	
 
@@ -26,7 +26,7 @@
 		exit();
 	}
 
-	// Vérifier que l'adresse email n'a pas été déjà utilisé // 
+	// Vérifier que l'adresse email est utilisé ?  // 
 	$requete = $bdd->prepare('SELECT COUNT(*) as numberEmail FROM user WHERE email = ?');
 	$requete->execute([$email]);
 

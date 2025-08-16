@@ -1,3 +1,65 @@
+<?php 
+// Mise en place de la connexion de l'utilisateur après inscription // 
+
+// Initialisation de session // 
+session_start(); 
+
+	// On vérifie que le formulaire de connexion a bien été rempli // 
+	if(!empty($_POST['email'] && !empty($_POST['password']))){
+
+	// connexion à la base de donnée // 
+	require_once('src/connexion.php');
+
+	// Variables // 
+	$email = htmlspecialchars($_POST['email']);
+	$password = htmlspecialchars($_POST['password']); 
+	
+	// L'adresse email est elle correct ? 
+	if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+		header('location: index.php?error=1&message=Votre adresse eamail est invalide.');
+		exit();
+	}
+
+	// Chiffrement du mot de passe // 
+	$password = "aq1".sha1($password."123")."25";
+	
+	
+	
+	// Vérifier que l'adresse email n'a pas été déjà utilisé // 
+	$requete = $bdd->prepare('SELECT COUNT(*) as numberEmail FROM user WHERE email = ?');
+	$requete->execute([$email]);
+
+	while($emailVerification = $requete->fetch()){
+		if($emailVerification['numberEmail'] != 1){
+			header('location: index.php?error=1&message=Impossible de vous authentifié correctement.');
+			exit();
+		}
+	}
+	
+	// Connexion de l'utilisateur // 
+	$requete = $bdd->prepare('SELECT * FROM user WHERE email = ?');
+	$requete->execute([$email]);
+
+	while($user = $requete->fetch()){
+		// je vérfie que le mot de passe est correct // 
+		if($password == $user['password']){
+
+			$_SESSION['connect'] = 1;
+			$_SESSION['email'] = $user['email'];
+			header('location: index.php?success=1');
+			exit();
+
+		} else {
+			header('location: index.php?error=1&message=Impossible de vous authentifiez correctement.');
+			exit();
+		}
+	}
+
+
+
+
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
