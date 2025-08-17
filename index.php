@@ -4,6 +4,8 @@
 // Initialisation de session // 
 session_start(); 
 
+require_once('src/option.php');
+
 	// On vérifie que le formulaire de connexion a bien été rempli // 
 	if(!empty($_POST['email']) && !empty($_POST['password'])){
 
@@ -25,15 +27,13 @@ session_start();
 	
 	
 	
-	// Vérifier que l'adresse email n'a pas été déjà utilisé // 
+	// Vérifier que l'adresse email existe bien // 
 	$requete = $bdd->prepare('SELECT COUNT(*) as numberEmail FROM user WHERE email = ?');
 	$requete->execute([$email]);
-
-	while($emailVerification = $requete->fetch()){
-		if($emailVerification['numberEmail'] != 1){
-			header('location: index.php?error=1&message=Impossible de vous authentifié correctement.');
-			exit();
-		}
+	$emailVerification = $requete->fetch();
+	if(!$emailVerification || $emailVerification['numberEmail'] != 1){
+		header('location: index.php?error=1&message=Impossible de vous authentifié correctement.');
+		exit();
 	}
 	
 	// Connexion de l'utilisateur // 
@@ -46,6 +46,12 @@ session_start();
 
 			$_SESSION['connect'] = 1;
 			$_SESSION['email'] = $user['email'];
+
+			// Utilisation du checkbox pour sauvegrader les données user en cookies //
+			if(isset($_POST['auto'])){
+				setcookie('auth', $user['secret'], time() + 365*24*3600, '/', null, false, true);
+			}
+
 			header('location: index.php?success=1');
 			exit();
 
